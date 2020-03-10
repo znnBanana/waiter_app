@@ -23,10 +23,10 @@
           @complete="completeHandler">
         </briup-order-item>
       </van-tab> 
-      <!-- <van-tab title="待确认">
+      <van-tab title="待确认">
         <briup-order-item 
           :data="ordersStatusFilter('待确认')"></briup-order-item>
-      </van-tab> -->
+      </van-tab>
       <van-tab title="已完成">
         <briup-order-item 
           :data="ordersStatusFilter('已完成')">

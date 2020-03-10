@@ -19,7 +19,7 @@
     <!-- /实名认证 -->
 
     <!-- 我的收入 -->
-    <van-cell icon="gold-coin-o" title="我的收入" is-link to="income_list" />
+    <van-cell icon="gold-coin-o" title="我的收入" :value="IncomeTotal" is-link to="income_list" />
     <!-- /我的收入 -->
 
     <!-- 我的订单 -->
@@ -40,11 +40,14 @@ export default {
       
     }
   },
+  created() {
+    this.EarningWaiter(this.info.id)
+    // 员工详细信息
+    this.WaiterById(this.info.id)
+  },
   methods:{
-    ...mapActions('user',['logout']),
-    toAddressHandler(){
-      // this.$router.push({path:'/manager/address'})
-    },
+    ...mapActions('user',['logout','EarningWaiter','WaiterById']),
+    // 退出登录
     logoutHandler(){
       this.logout()
       .then(()=>{
@@ -53,7 +56,7 @@ export default {
     }
   },
   computed:{
-    ...mapState("user",["info"]),
+    ...mapState("user",['earn',"info"]),
     ...mapGetters('user',['IncomeTotal'])
   }
 }
@@ -90,7 +93,6 @@ export default {
  width: 100%;
  border-radius: 50%;
 }
-
 .btn {
   background-color: #ededed;
   width: 90%;

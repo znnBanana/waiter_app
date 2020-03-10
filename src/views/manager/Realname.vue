@@ -1,26 +1,30 @@
 <template>
     <div class="realname">
         <briup-fulllayout title="实名认证" @back="backHandler">
-            <van-cell title="请上传身份证正面照" size="large" />
-                <van-uploader :after-read="afterRead" />
-                <van-cell title="请上传身份证反面照" size="large" />
-                <van-uploader :after-read="afterRead" />
-                <!-- 验证 -->
-                <div class="btn" @click="RealnameHandler">
-                    验证
-                </div>
-                <!-- 验证 -->
-            {{info}}
+            <van-cell title="请上传身份证正反面照" size="large" />
+            <van-uploader v-model="fileList" max-count="2" :after-read="afterRead" />
+            <!-- 验证 -->
+            <div class="btn" @click="RealnameHandler">
+                验证
+            </div>
+            <!-- 验证 -->
         </briup-fulllayout>
     </div>
 </template>
 
 <script>
 import {mapState,mapActions} from 'vuex'
+import axios from 'axios'
+import Vue from 'vue';
+import { Toast } from 'vant';
+
+Vue.use(Toast);
 export default {
     data() {
         return {
-
+            fileList: [],
+            photo:[],
+            formData:[]
         }
     },
     computed: {
@@ -37,21 +41,28 @@ export default {
             this.params = {
                 user_id:this.info.id
             }
-            // console.log(this.params)
-            this.WaiterRealname(this.params)
-            Toast.success('验证成功');
+            axios.post('http://134.175.100.63:5588/user/realname?user_id='+this.info.id, this.formData)
+            .then(res => { 
+                Toast.success(res.data);　　　　
+        　　});
+            // 此时不需要再调用一次接口
+            // this.WaiterRealname(this.params)
         },
         afterRead(file) {
-            // 此时可以自行将文件上传至服务器
-            //   构造一个FormData,
-            // var formData = new FormData();
-            // formData.append('file1',file.file);
-            // formData.append('file2',file.file);
-            // axios.post('http://134.175.100.63:5588/user/realname?user_id=183',formData)
-            // .then(res => {
-            //     console.log(res.data)
-            // })
-            //   console.log(file);
+            //构造一个 FormData，把后台需要发送的参数添加
+            this.formData = new FormData(); 
+            //接口需要传的参数
+            this.photo.push(file)
+            this.photo.map((item,index)=>{
+                if(index == 0){
+                    this.formData.append('file1',item.file)
+                }
+                if(index == 1){
+                    this.formData.append('file2',item.file)
+                }
+            })
+            console.log(this.formData.getAll('file1'),'file1')
+            console.log(this.formData.getAll('file2'),'file2')
         },
         // 返回到我的页面
         backHandler(){
